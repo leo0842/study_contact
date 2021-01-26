@@ -3,6 +3,7 @@ package com.example.springbootpractice.contact.domain;
 import java.time.LocalDate;
 import java.util.Objects;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -14,11 +15,15 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Where;
 
 @Entity
 @RequiredArgsConstructor
 @NoArgsConstructor
 @Data
+@AllArgsConstructor
+@Where(clause = "deleted = false")
 public class Person {
 
   @Id
@@ -26,9 +31,11 @@ public class Person {
   private Long id;
 
   @NonNull
+  @Column(nullable = false)
   private String name;
 
   @NonNull
+  @Column(nullable = false)
   private int age;
 
   private String hobby;
@@ -40,6 +47,9 @@ public class Person {
   private LocalDate birthday;
 
   private String job;
+
+  @ColumnDefault("0")
+  private boolean deleted;
 
   @ToString.Exclude
   private String phoneNumber;

@@ -22,19 +22,32 @@ public class PersonService {
   @Autowired
   private BlockRepository blockRepository;
 
-  public List<Person> getPeopleExcludeBlock(){
+  public List<Person> getPeopleByName(String name) {
+    List<Person> people = personRepository.findAll();
+    return people.stream().filter(person -> person.getName().equals(name)).collect(Collectors.toList());
+  }
+
+  public List<Person> getPeopleByNameWithRepo(String name) {
+    return personRepository.findByName(name);
+  }
+
+  public List<Person> getPeopleByBlock() {
+    return personRepository.findByBlockIsNotNull();
+  }
+
+  public List<Person> getPeopleExcludeBlock() {
     List<Person> people = personRepository.findAll();
     return people
         .stream().filter(person ->
-        !blockRepository.findAll()
-            .stream()
-            .map(Block::getName)
-            .collect(Collectors.toList())
-            .contains(person.getName()))
+            !blockRepository.findAll()
+                .stream()
+                .map(Block::getName)
+                .collect(Collectors.toList())
+                .contains(person.getName()))
         .collect(Collectors.toList());
   }
 
-  public List<Person> getPeopleExcludeBlockByRelation(){
+  public List<Person> getPeopleExcludeBlockByRelation() {
     List<Person> people = personRepository.findAll();
 
     List<String> blockedPeople = people
@@ -51,10 +64,40 @@ public class PersonService {
 
   }
 
-//  @Transactional(readOnly = true)
-  public Person getPerson(Long id){
+  //  @Transactional(readOnly = true)
+  public Person getPerson(Long id) {
     Optional<Person> person = personRepository.findById(id);
     log.info("person: {}", person.orElse(null));
-    return person.get();
+    return person.orElse(null);
   }
+
+  @Transactional
+  public void savePerson(Person person) {
+    personRepository.save(person);
+  }
+
+  @Transactional
+  public void updatePerson(Long id, Person person) {
+    Person person1 = personRepository.findById(id).orElseThrow(() -> new RuntimeException("No data"));
+    person1.setName(person.getName());
+    person1.setHobby(person.getHobby());
+    person1.setBloodType(person.getBloodType());
+    System.out.println(person1);
+    personRepository.save(person1);
+  }
+
+  @Transactional
+  public void deletePerson(Long id) {
+    Person person = personRepository.findById(id).orElseThrow(() -> new RuntimeException("No data"));
+    person.setDeleted(true);
+    personRepository.save(person);
+    System.out.println(personRepository.findAll());
+  }
+
+//  @Transactional
+//  public List<Person> getPeople() {
+//    List<Person> people = personRepository.findAll();
+//    System.out.println(people);
+//    return people;
+//  }
 }

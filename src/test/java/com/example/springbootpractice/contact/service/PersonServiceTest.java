@@ -58,6 +58,19 @@ class PersonServiceTest {
   }
 
   @Test
+  void jpaQueryMethod(){
+
+    savePeople();
+    List<Person> people = personService.getPeopleByName("Lee");
+    System.out.println(people);
+    System.out.println("============");
+    List<Person> people1 = personService.getPeopleByNameWithRepo("Lee");
+    System.out.println(people1);
+    List<Person> people2 = personService.getPeopleByBlock();
+    System.out.println(people2);
+  }
+
+  @Test
   void getPerson(){
     givenPerson2("Lee",20);
     System.out.println(personService.getPerson(1L));
@@ -106,6 +119,14 @@ class PersonServiceTest {
     person.setBlock(block);
     personRepository.save(person);
 
+  }
+
+  private void savePeople(){
+    givenPerson("Lee",20);
+    givenPerson("Kim",20);
+    givenPerson("Park",20);
+    givenPerson("Kang",21);
+    givenPerson2("Jung",23);
   }
 
 }
