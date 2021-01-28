@@ -1,9 +1,11 @@
 package com.example.springbootpractice.contact.domain;
 
+import com.example.springbootpractice.contact.domain.dto.Birthday;
 import java.time.LocalDate;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -44,7 +46,8 @@ public class Person {
 
   private String address;
 
-  private LocalDate birthday;
+  @Embedded
+  private Birthday birthday;
 
   private String job;
 
@@ -57,5 +60,14 @@ public class Person {
   @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
   @ToString.Exclude
   private Block block;
+
+  public int getKoreanAge() {
+    return LocalDate.now().getYear() - birthday.getYearOfBirthday() + 1;
+  }
+
+  public boolean isBirthdayToday() {
+    return LocalDate.now().equals(LocalDate.of(birthday.getYearOfBirthday(), birthday.getMonthOfBirthday(), birthday.getDayOfBirthday()));
+
+  }
 
 }

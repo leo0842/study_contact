@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 class PersonServiceTest {
@@ -35,6 +36,7 @@ class PersonServiceTest {
   }
 
   @Test
+  @Transactional
   void cascadeTest(){
     givenPerson("Lee",20);
     givenPerson("Kim",20);
