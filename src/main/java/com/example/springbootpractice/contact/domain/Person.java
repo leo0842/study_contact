@@ -2,7 +2,6 @@ package com.example.springbootpractice.contact.domain;
 
 import com.example.springbootpractice.contact.domain.dto.Birthday;
 import java.time.LocalDate;
-import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -61,11 +60,11 @@ public class Person {
   @ToString.Exclude
   private Block block;
 
-  public int getKoreanAge() {
+  public int KoreanAge() {
     return LocalDate.now().getYear() - birthday.getYearOfBirthday() + 1;
   }
 
-  public boolean isBirthdayToday() {
+  public boolean BirthdayToday() {
     return LocalDate.now().equals(LocalDate.of(birthday.getYearOfBirthday(), birthday.getMonthOfBirthday(), birthday.getDayOfBirthday()));
 
   }

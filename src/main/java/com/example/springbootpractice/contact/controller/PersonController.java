@@ -1,8 +1,10 @@
 package com.example.springbootpractice.contact.controller;
 
 import com.example.springbootpractice.contact.domain.Person;
+import com.example.springbootpractice.contact.repository.PersonRepository;
 import com.example.springbootpractice.contact.service.PersonService;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,10 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/api/person")
+@Slf4j
 public class PersonController {
 
   @Autowired
   private PersonService personService;
+
+  @Autowired
+  private PersonRepository personRepository;
 
   @GetMapping
   public Person getPerson(@RequestParam Long id){
@@ -49,6 +55,7 @@ public class PersonController {
   @DeleteMapping(value = "/{id}")
   public void deletePerson(@PathVariable Long id) {
     personService.deletePerson(id);
+    log.info("people: {}", personRepository.findAll());
   }
 
 }

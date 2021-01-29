@@ -73,6 +73,7 @@ public class PersonService {
 
   @Transactional
   public void savePerson(Person person) {
+    System.out.println("In PersonService: " + person);
     personRepository.save(person);
   }
 
@@ -91,7 +92,6 @@ public class PersonService {
     Person person = personRepository.findById(id).orElseThrow(() -> new RuntimeException("No data"));
     person.setDeleted(true);
     personRepository.save(person);
-    System.out.println(personRepository.findAll());
   }
 
 //  @Transactional
