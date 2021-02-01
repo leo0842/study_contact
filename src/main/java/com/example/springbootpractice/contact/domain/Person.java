@@ -69,4 +69,8 @@ public class Person {
 
   }
 
+  public String birthdayFormat(){
+    return birthday.getYearOfBirthday().toString() + "-" + birthday.getMonthOfBirthday().toString() + "-" + birthday.getDayOfBirthday().toString();
+  }
+
 }

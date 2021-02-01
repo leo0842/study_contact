@@ -23,8 +23,11 @@ public class PersonService {
   private BlockRepository blockRepository;
 
   public List<Person> getPeopleByName(String name) {
-    List<Person> people = personRepository.findAll();
-    return people.stream().filter(person -> person.getName().equals(name)).collect(Collectors.toList());
+//    List<Person> people = personRepository.findAll();
+//    return people.stream().filter(person -> person.getName().equals(name)).collect(Collectors.toList());
+
+    return personRepository.findByName(name);
+
   }
 
   public List<Person> getPeopleByNameWithRepo(String name) {
@@ -67,7 +70,12 @@ public class PersonService {
   //  @Transactional(readOnly = true)
   public Person getPerson(Long id) {
     Optional<Person> person = personRepository.findById(id);
-    log.info("person: {}", person.orElse(null));
+    Person person1 = person.orElse(null);
+    if (person1 != null) {
+      if (person1.getBirthday() != null) {
+        log.info("person: {}", person1.birthdayFormat());
+      }
+    }
     return person.orElse(null);
   }
 
@@ -83,7 +91,6 @@ public class PersonService {
     person1.setName(person.getName());
     person1.setHobby(person.getHobby());
     person1.setBloodType(person.getBloodType());
-    System.out.println(person1);
     personRepository.save(person1);
   }
 
