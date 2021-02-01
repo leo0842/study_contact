@@ -1,6 +1,6 @@
 package com.example.springbootpractice.contact.controller;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -8,20 +8,17 @@ import com.example.springbootpractice.contact.domain.Person;
 import com.example.springbootpractice.contact.repository.PersonRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import org.apache.tomcat.jni.Local;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest
 class PersonControllerTest {
@@ -36,13 +33,17 @@ class PersonControllerTest {
   private ObjectMapper objectMapper;
 
   @Autowired
-  private MappingJackson2HttpMessageConverter messageConverter;
+  private WebApplicationContext wac;
 
   private MockMvc mockMvc;
 
   @BeforeEach
   void beforeEach() {
-    mockMvc = MockMvcBuilders.standaloneSetup(personController).setMessageConverters(messageConverter).build();
+
+    mockMvc = MockMvcBuilders
+        .webAppContextSetup(wac)
+        .alwaysDo(print())
+        .build();
   }
 
   @Test
@@ -69,8 +70,8 @@ class PersonControllerTest {
     person.setName("Leo Kim");
     mockMvc.perform(
         MockMvcRequestBuilders.post("/api/person")
-          .contentType(MediaType.APPLICATION_JSON)
-          .content(toJsonString(person)))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(toJsonString(person)))
         .andExpect(status().isCreated());
     personRepository.findAll().forEach(System.out::println);
     Assertions.assertEquals(personRepository.findById(1L).get().getName(), "Leo Kim");
@@ -97,21 +98,30 @@ class PersonControllerTest {
     );
 
   }
-
   @Test
   @Transactional
   void deletePerson() throws Exception {
-
-    System.out.println(personRepository.findAll());
 
     mockMvc.perform(
         MockMvcRequestBuilders.delete("/api/person/2")
     )
         .andExpect(status().isOk());
-//        .andExpect(content().string("true"));
-//
 
     Assertions.assertTrue(personRepository.findPeopleDeleted().stream().anyMatch(person -> person.getId().equals(2L)));
+  }
+
+  @Test
+  @Transactional
+  void deletePersonNotFound() throws Exception {
+
+    mockMvc.perform(
+        MockMvcRequestBuilders.delete("/api/person/4")
+    )
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value(400))
+        .andExpect(jsonPath("$.message").value("No data"));
+
+    Assertions.assertFalse(personRepository.findPeopleDeleted().stream().anyMatch(person -> person.getId().equals(4L)));
   }
 
   @Test

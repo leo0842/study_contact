@@ -2,6 +2,7 @@ package com.example.springbootpractice.contact.service;
 
 import com.example.springbootpractice.contact.domain.Block;
 import com.example.springbootpractice.contact.domain.Person;
+import com.example.springbootpractice.contact.exception.PersonNotFoundException;
 import com.example.springbootpractice.contact.repository.BlockRepository;
 import com.example.springbootpractice.contact.repository.PersonRepository;
 import java.util.List;
@@ -96,7 +97,7 @@ public class PersonService {
 
   @Transactional
   public void deletePerson(Long id) {
-    Person person = personRepository.findById(id).orElseThrow(() -> new RuntimeException("No data"));
+    Person person = personRepository.findById(id).orElseThrow(() -> new PersonNotFoundException("No data"));
     person.setDeleted(true);
     personRepository.save(person);
   }
