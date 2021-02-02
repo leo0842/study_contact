@@ -24,9 +24,6 @@ import org.springframework.web.context.WebApplicationContext;
 class PersonControllerTest {
 
   @Autowired
-  private PersonController personController;
-
-  @Autowired
   private PersonRepository personRepository;
 
   @Autowired
@@ -54,6 +51,17 @@ class PersonControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value("Leo"))
         .andExpect(jsonPath("$.birthday").value("1993-10-19"));
+  }
+
+  @Test
+  void getPeople() throws Exception {
+    mockMvc.perform(
+        MockMvcRequestBuilders.get("/api/person/list")
+            .param("page","0")
+            .param("size","1")
+    )
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content.[0].name").value("Leo"));
   }
 
   //  @Test
@@ -134,6 +142,5 @@ class PersonControllerTest {
   private String toJsonString(Person person) throws JsonProcessingException {
     return objectMapper.writeValueAsString(person);
   }
-
 
 }
